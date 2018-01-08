@@ -38,8 +38,6 @@ class Value {
 		foreach($out[1] as $res){
 			$val = TriggerPE::getPlaceHolder($res, $env->getPlayer(), null); // TODO: Pass event in the future
 
-			echo "<$res>\n";
-			var_dump($val);
 			if($val === null) continue;
 			if($isVar or $this->getType($env) === Value::TYPE_STRING){
 				$value = str_replace("<$res>", $val->getString($env), $value);
