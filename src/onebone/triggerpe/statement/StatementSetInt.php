@@ -21,12 +21,12 @@ class StatementSetInt extends Statement {
 	}
 
 	public function execute(Environment $env){
-		$env->setVariable($this->var, new Variable($this->value->getInt($env), Variable::TYPE_INT));
+		$env->setVariable($this->var, new Variable($this->value->getInt($env), Value::TYPE_INT));
 
 		return $this->value;
 	}
 
 	public function getReturnType(): int{
-		return Variable::TYPE_INT;
+		return Value::TYPE_INT;
 	}
 }

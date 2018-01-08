@@ -20,7 +20,7 @@ class ParserSetInt extends StatementParser {
 				break;
 			case 1:
 				if(is_numeric($word) or Variable::isVariable($word)){
-					$this->value = new Value($word, Variable::TYPE_INT);
+					$this->value = new Value($word, Value::TYPE_INT);
 				}else{
 					throw new UnexpectedArgumentTypeError($word, 'INT', $line);
 				}

@@ -3,15 +3,10 @@
 namespace onebone\triggerpe;
 
 class Variable {
-	const TYPE_VOID = 0;
-	const TYPE_INT = 1;
-	const TYPE_BOOL = 2;
-	const TYPE_STRING = 3;
-
 	private $value;
 	private $type;
 
-	public function __construct($value, $type){
+	public function __construct($value, int $type){
 		$this->value = $value;
 		$this->type = $type;
 	}

@@ -3,7 +3,7 @@
 namespace onebone\triggerpe\statement;
 
 use onebone\triggerpe\Environment;
-use onebone\triggerpe\Variable;
+use onebone\triggerpe\Value;
 
 class DummyStatement extends Statement {
 	public function execute(Environment $env){
@@ -11,6 +11,6 @@ class DummyStatement extends Statement {
 	}
 
 	public function getReturnType(): int{
-		return Variable::TYPE_VOID;
+		return Value::TYPE_VOID;
 	}
 }

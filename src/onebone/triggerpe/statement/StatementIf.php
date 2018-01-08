@@ -4,7 +4,6 @@ namespace onebone\triggerpe\statement;
 
 use onebone\triggerpe\Environment;
 use onebone\triggerpe\TriggerPE;
-use onebone\triggerpe\Variable;
 
 class StatementIf extends Statement {
 	/** @var Statement */
@@ -22,13 +21,13 @@ class StatementIf extends Statement {
 
 		$isTrue = false;
 		switch($this->condition->getReturnType()){
-			case Variable::TYPE_BOOL:
+			case Value::TYPE_BOOL:
 				$isTrue = $res === true;
 				break;
-			case Variable::TYPE_INT:
+			case Value::TYPE_INT:
 				$isTrue = $res > 0;
 				break;
-			case Variable::TYPE_STRING:
+			case Value::TYPE_STRING:
 				$isTrue = $res === 'true';
 				break;
 		}
@@ -45,6 +44,6 @@ class StatementIf extends Statement {
 	}
 
 	public function getReturnType(): int{
-		return Variable::TYPE_VOID;
+		return Value::TYPE_VOID;
 	}
 }

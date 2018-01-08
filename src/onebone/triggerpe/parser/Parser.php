@@ -10,6 +10,7 @@ use onebone\triggerpe\parser\statement\ParserSetInt;
 use onebone\triggerpe\parser\statement\StatementParser;
 use onebone\triggerpe\statement\DummyStatement;
 use onebone\triggerpe\statement\Statement;
+use onebone\triggerpe\statement\StatementAnd;
 use onebone\triggerpe\TriggerPE;
 
 class Parser {
@@ -32,7 +33,7 @@ class Parser {
 		}
 	}
 
-	public function parse(): Statement {
+	public function parse($one=false): Statement {
 		$parser = null;
 
 		$stmt = null;
@@ -58,8 +59,12 @@ class Parser {
 					}
 				}
 				if($this->isCommand($word)){
+					$cmd = strtoupper($this->getCommand($word));
+
 					if(!$canPass) throw new UnexpectedCommandError($word, $index);
 					elseif($parser instanceof StatementParser){
+						if($one) return $parser->getFinalStatement();
+
 						if($stmt instanceof Statement){
 							$stmt->setNextStatement($parser->getFinalStatement());
 							$stmt = $stmt->getNextStatement();
@@ -69,8 +74,7 @@ class Parser {
 						}
 					}
 
-					$cmd = $this->getCommand($word);
-					switch(strtoupper($cmd)){
+					switch($cmd){
 						case 'SETINT';
 							$parser = new ParserSetInt($this->plugin);
 							$canPass = false;
