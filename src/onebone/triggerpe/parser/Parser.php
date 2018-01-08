@@ -6,6 +6,7 @@ use onebone\triggerpe\parser\error\InvalidCommandError;
 use onebone\triggerpe\parser\error\UnexpectedCommandError;
 use onebone\triggerpe\parser\error\UnexpectedEndOfScriptError;
 use onebone\triggerpe\parser\statement\ParserAddInt;
+use onebone\triggerpe\parser\statement\ParserChat;
 use onebone\triggerpe\parser\statement\ParserIf;
 use onebone\triggerpe\parser\statement\ParserSetInt;
 use onebone\triggerpe\parser\statement\StatementParser;
@@ -86,6 +87,10 @@ class Parser {
 							$canPass = false;
 							break;
 						case 'ENDIF':
+							break;
+						case 'CHAT':
+							$parser = new ParserChat($this->plugin);
+							$canPass = false;
 							break;
 						default: throw new InvalidCommandError($word, $index);
 					}
