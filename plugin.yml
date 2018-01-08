@@ -1,0 +1,19 @@
+name: TriggerPE
+version: "1.0"
+author: onebone
+api:
+- 3.0.0-ALPHA7
+- 3.0.0-ALPHA8
+- 3.0.0-ALPHA9
+- 3.0.0-ALPHA10
+- 3.0.0-ALPHA11
+- 3.0.0-ALPHA12
+- 3.0.0-ALPHA13
+- 3.0.1
+main: onebone\triggerpe\TriggerPE
+
+commands:
+  tpe:
+    usage: /tpe <event> <script>
+    description: Add script line to trigger
+
