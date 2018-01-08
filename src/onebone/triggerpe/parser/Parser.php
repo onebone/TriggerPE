@@ -27,7 +27,7 @@ class Parser {
 			}elseif($line instanceof Line){
 				$this->lines[] = $line;
 			}else{
-				throw new \InvalidArgumentCountException('Invalid type of line was given. Expected string, \onebone\triggerpe\Line, got' . get_class($line));
+				throw new \InvalidArgumentException('Invalid type of line was given. Expected string, \onebone\triggerpe\Line, got' . get_class($line));
 			}
 		}
 	}
