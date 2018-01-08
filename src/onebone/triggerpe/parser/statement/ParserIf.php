@@ -11,7 +11,7 @@ class ParserIf extends StatementParser {
 	/** @var Statement */
 	private $condition = null, $stmt = null, $elseStmt = null;
 
-	private $isCondition = false, $isStatement = false, $isEnd = false, $isElse = false;
+	private $isCondition = false, $isStatement = false, $isEnd = false, $isElse = false, $isElseEnd = false;
 
 	public function addWord(int $line, string $word){
 		$uword = strtoupper($word);
@@ -36,14 +36,13 @@ class ParserIf extends StatementParser {
 				$parser = new Parser($this->getPlugin(), $words);
 				$stmt = $parser->parse();
 				if($this->isElse){
+					$this->isElseEnd = true;
 					$this->elseStmt = $stmt;
 				}else{
 					$this->stmt = $stmt;
 				}
 
 				$this->isEnd = true;
-
-				return;
 			}elseif($uword === '@ELSE'){
 				if(!$this->isEnd){
 					throw new UnexpectedCommandError($word, $line);
@@ -57,11 +56,11 @@ class ParserIf extends StatementParser {
 	}
 
 	public function isWordRequired(string $word): bool {
-		return !$this->isEnd or strtoupper($word) === '@ELSE' or $this->isElse;
+		return $this->isEnd and strtoupper($word) === '@ELSE' or !$this->isEnd or $this->isElse and !$this->isElseEnd;
 	}
 
 	public function isArgumentCountAvailable(int $count): bool {
-		return $this->isEnd or $this->isElse;
+		return $this->getLastAddedWord() === '@ENDIF';
 	}
 
 	public function getDefaultArgumentCount(): int {

@@ -26,6 +26,15 @@ abstract class StatementParser {
 		$this->words[] = $word;
 	}
 
+	public function getLastAddedWord(): string {
+		$len = count($this->words);
+		if($len > 0){
+			return $this->words[$len - 1];
+		}
+
+		return '';
+	}
+
 	public function getWords(): array {
 		return $this->words;
 	}

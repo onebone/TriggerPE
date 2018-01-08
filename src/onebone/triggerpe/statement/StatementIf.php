@@ -15,6 +15,7 @@ class StatementIf extends Statement {
 
 		$this->condition = $condition;
 		$this->stmt = $stmt;
+		$this->elseStmt = $elseStmt;
 	}
 
 	public function execute(Environment $env): ?Value{
@@ -28,15 +29,43 @@ class StatementIf extends Statement {
 
 		if($isTrue){
 			if($this->stmt instanceof Statement){
-				$this->stmt->execute($env);
+				$env->executeStatement($this->stmt);
 			}
 		}else{
-			if($this->elseStmt instanceof StatementAnd){
-				$this->elseStmt->execute($env);
+			if($this->elseStmt instanceof Statement){
+				$env->executeStatement($this->elseStmt);
 			}
 		}
 
 		return null;
+	}
+
+	public function setNextStatement(Statement $next){
+		parent::setNextStatement($next);
+
+		if($this->stmt instanceof Statement){
+			$stmt = $this->stmt;
+			while(true){
+				if($stmt->getNextStatement() === null){
+					$stmt->setNextStatement($next);
+					break;
+				}else{
+					$stmt = $stmt->getNextStatement();
+				}
+			}
+		}
+
+		if($this->elseStmt instanceof Statement){
+			$stmt = $this->elseStmt;
+			while(true){
+				if($stmt->getNextStatement() === null){
+					$stmt->setNextStatement($next);
+					break;
+				}else{
+					$stmt = $stmt->getNextStatement();
+				}
+			}
+		}
 	}
 
 	public function getCondition(): Statement {

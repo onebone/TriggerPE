@@ -52,10 +52,7 @@ class Parser {
 					if($parser->isWordRequired($word)){
 						$parser->addWord($index, $word);
 
-						if($parser->isArgumentCountAvailable($parser->getWordCount())){
-							$canPass = true;
-						}
-
+						$canPass = $parser->isArgumentCountAvailable($parser->getWordCount());
 						continue;
 					}
 				}
@@ -87,6 +84,8 @@ class Parser {
 						case 'IF':
 							$parser = new ParserIf($this->plugin);
 							$canPass = false;
+							break;
+						case 'ENDIF':
 							break;
 						default: throw new InvalidCommandError($word, $index);
 					}
