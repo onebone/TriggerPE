@@ -3,9 +3,9 @@
 namespace onebone\triggerpe\parser;
 
 use onebone\triggerpe\parser\error\InvalidCommandError;
-use onebone\triggerpe\parser\error\UnexpectedArgumentTypeError;
 use onebone\triggerpe\parser\error\UnexpectedCommandError;
 use onebone\triggerpe\parser\error\UnexpectedEndOfScriptError;
+use onebone\triggerpe\parser\statement\ParserAddInt;
 use onebone\triggerpe\parser\statement\ParserSetInt;
 use onebone\triggerpe\parser\statement\StatementParser;
 use onebone\triggerpe\statement\DummyStatement;
@@ -49,13 +49,13 @@ class Parser {
 				if($parser instanceof StatementParser){
 					if($parser->isWordRequired($word)){
 						$parser->addWord($index, $word);
-					}
 
-					if($parser->isArgumentCountAvailable($parser->getWordCount())){
-						$canPass = true;
-					}
+						if($parser->isArgumentCountAvailable($parser->getWordCount())){
+							$canPass = true;
+						}
 
-					continue;
+						continue;
+					}
 				}
 				if($this->isCommand($word)){
 					if(!$canPass) throw new UnexpectedCommandError($word, $index);
@@ -73,6 +73,10 @@ class Parser {
 					switch(strtoupper($cmd)){
 						case 'SETINT';
 							$parser = new ParserSetInt($this->plugin);
+							$canPass = false;
+							break;
+						case 'ADDINT':
+							$parser = new ParserAddInt($this->plugin);
 							$canPass = false;
 							break;
 						default: throw new InvalidCommandError($word, $index);

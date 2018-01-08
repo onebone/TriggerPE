@@ -35,4 +35,8 @@ class Variable {
 	public function getBool(): bool {
 		return (bool) $this->value;
 	}
+
+	public static function isVariable(string $value): bool {
+		return is_string($value) and strlen($value) > 1 and $value{0} === '$';
+	}
 }

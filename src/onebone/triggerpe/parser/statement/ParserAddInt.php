@@ -4,11 +4,11 @@ namespace onebone\triggerpe\parser\statement;
 
 use onebone\triggerpe\parser\error\UnexpectedArgumentTypeError;
 use onebone\triggerpe\statement\Statement;
-use onebone\triggerpe\statement\StatementSetInt;
+use onebone\triggerpe\statement\StatementAddInt;
 use onebone\triggerpe\Value;
 use onebone\triggerpe\Variable;
 
-class ParserSetInt extends StatementParser {
+class ParserAddInt extends StatementParser {
 	private $var;
 	private $value;
 
@@ -43,6 +43,6 @@ class ParserSetInt extends StatementParser {
 	}
 
 	public function getFinalStatement(): Statement{
-		return new StatementSetInt($this->getPlugin(), $this->var, $this->value);
+		return new StatementAddInt($this->getPlugin(), $this->var, $this->value);
 	}
 }

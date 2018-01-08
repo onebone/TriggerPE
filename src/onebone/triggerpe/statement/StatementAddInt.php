@@ -7,7 +7,7 @@ use onebone\triggerpe\TriggerPE;
 use onebone\triggerpe\Value;
 use onebone\triggerpe\Variable;
 
-class StatementSetInt extends Statement {
+class StatementAddInt extends Statement {
 	/** @var string */
 	private $var;
 	/** @var Value */
@@ -21,9 +21,15 @@ class StatementSetInt extends Statement {
 	}
 
 	public function execute(Environment $env){
-		$env->setVariable($this->var, new Variable($this->value->getInt($env), Variable::TYPE_INT));
+		$var = $env->getVariable($this->var);
+		if($var === null){
+			$var = new Variable(0, Variable::TYPE_INT);
+		}
 
-		return $this->value;
+		$final = $var->getValue() + $this->value->getInt($env);
+		$env->setVariable($this->var, new Variable($final, Variable::TYPE_INT));
+
+		return $final;
 	}
 
 	public function getReturnType(): int{
