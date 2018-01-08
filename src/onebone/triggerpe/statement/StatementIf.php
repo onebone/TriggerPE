@@ -4,39 +4,39 @@ namespace onebone\triggerpe\statement;
 
 use onebone\triggerpe\Environment;
 use onebone\triggerpe\TriggerPE;
+use onebone\triggerpe\Value;
 
 class StatementIf extends Statement {
 	/** @var Statement */
-	private $condition, $stmt;
+	private $condition, $stmt, $elseStmt;
 
-	public function __construct(TriggerPE $plugin, ?Statement $next, Statement $condition, ?Statement $stmt){
+	public function __construct(TriggerPE $plugin, Statement $condition, ?Statement $stmt, ?Statement $elseStmt, ?Statement $next = null){
 		parent::__construct($plugin, $next);
 
 		$this->condition = $condition;
 		$this->stmt = $stmt;
 	}
 
-	public function execute(Environment $env){
+	public function execute(Environment $env): ?Value{
 		$res = $this->condition->execute($env);
 
 		$isTrue = false;
-		switch($this->condition->getReturnType()){
-			case Value::TYPE_BOOL:
-				$isTrue = $res === true;
-				break;
-			case Value::TYPE_INT:
-				$isTrue = $res > 0;
-				break;
-			case Value::TYPE_STRING:
-				$isTrue = $res === 'true';
-				break;
+
+		if($res !== null){
+			$isTrue = $res->getBool($env);
 		}
 
 		if($isTrue){
 			if($this->stmt instanceof Statement){
 				$this->stmt->execute($env);
 			}
+		}else{
+			if($this->elseStmt instanceof StatementAnd){
+				$this->elseStmt->execute($env);
+			}
 		}
+
+		return null;
 	}
 
 	public function getCondition(): Statement {

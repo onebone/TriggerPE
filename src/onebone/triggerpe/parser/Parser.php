@@ -6,6 +6,7 @@ use onebone\triggerpe\parser\error\InvalidCommandError;
 use onebone\triggerpe\parser\error\UnexpectedCommandError;
 use onebone\triggerpe\parser\error\UnexpectedEndOfScriptError;
 use onebone\triggerpe\parser\statement\ParserAddInt;
+use onebone\triggerpe\parser\statement\ParserIf;
 use onebone\triggerpe\parser\statement\ParserSetInt;
 use onebone\triggerpe\parser\statement\StatementParser;
 use onebone\triggerpe\statement\DummyStatement;
@@ -81,6 +82,10 @@ class Parser {
 							break;
 						case 'ADDINT':
 							$parser = new ParserAddInt($this->plugin);
+							$canPass = false;
+							break;
+						case 'IF':
+							$parser = new ParserIf($this->plugin);
 							$canPass = false;
 							break;
 						default: throw new InvalidCommandError($word, $index);

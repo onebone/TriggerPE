@@ -4,6 +4,7 @@ namespace onebone\triggerpe\statement;
 
 use onebone\triggerpe\Environment;
 use onebone\triggerpe\TriggerPE;
+use onebone\triggerpe\Value;
 
 abstract class Statement{
 	/** @var TriggerPE */
@@ -18,7 +19,7 @@ abstract class Statement{
 		$this->next = $next;
 	}
 
-	abstract public function execute(Environment $env);
+	abstract public function execute(Environment $env): ?Value;
 	abstract public function getReturnType(): int;
 
 	public function getPlugin(): TriggerPE {

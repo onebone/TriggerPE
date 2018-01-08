@@ -6,8 +6,8 @@ use onebone\triggerpe\Environment;
 use onebone\triggerpe\Value;
 
 class DummyStatement extends Statement {
-	public function execute(Environment $env){
-
+	public function execute(Environment $env): ?Value {
+		return null;
 	}
 
 	public function getReturnType(): int{

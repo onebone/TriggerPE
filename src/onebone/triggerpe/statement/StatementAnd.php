@@ -17,8 +17,8 @@ class StatementAnd extends Statement {
 		$this->b = $b;
 	}
 
-	public function execute(Environment $env){
-		return $this->a->getBool($env) and $this->b->getBool($env);
+	public function execute(Environment $env): ?Value{
+		return new Value($this->a->getBool($env) and $this->b->getBool($env), Value::TYPE_BOOL);
 	}
 
 	public function getReturnType(): int{

@@ -20,7 +20,7 @@ class StatementAddInt extends Statement {
 		$this->value = $value;
 	}
 
-	public function execute(Environment $env){
+	public function execute(Environment $env): ?Value{
 		$var = $env->getVariable($this->var);
 		if($var === null){
 			$var = new Variable(0, Value::TYPE_INT);
@@ -29,7 +29,7 @@ class StatementAddInt extends Statement {
 		$final = $var->getValue() + $this->value->getInt($env);
 		$env->setVariable($this->var, new Variable($final, Value::TYPE_INT));
 
-		return $final;
+		return new Value($final, Value::TYPE_INT);
 	}
 
 	public function getReturnType(): int{

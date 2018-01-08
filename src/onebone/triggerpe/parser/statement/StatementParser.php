@@ -30,6 +30,10 @@ abstract class StatementParser {
 		return $this->words;
 	}
 
+	public function clearWords(){
+		$this->words = [];
+	}
+
 	public function getWordCount(): int {
 		return count($this->words);
 	}

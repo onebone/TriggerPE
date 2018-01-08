@@ -20,7 +20,7 @@ class StatementSetInt extends Statement {
 		$this->value = $value;
 	}
 
-	public function execute(Environment $env){
+	public function execute(Environment $env): ?Value{
 		$env->setVariable($this->var, new Variable($this->value->getInt($env), Value::TYPE_INT));
 
 		return $this->value;
