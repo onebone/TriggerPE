@@ -2,6 +2,7 @@
 
 namespace onebone\triggerpe\parser\statement;
 
+use onebone\triggerpe\parser\Lines;
 use onebone\triggerpe\statement\Statement;
 use onebone\triggerpe\TriggerPE;
 
@@ -9,46 +10,22 @@ abstract class StatementParser {
 	/** @var TriggerPE */
 	private $plugin;
 
-	/** @var string[] */
-	private $words = [];
+	/** @var Lines */
+	private $lines;
 
-	public function __construct(TriggerPE $plugin){
+	public function __construct(TriggerPE $plugin, Lines $lines){
 		$this->plugin = $plugin;
 
-		$this->words = [];
+		$this->lines = $lines;
 	}
 
 	public function getPlugin(): TriggerPE {
 		return $this->plugin;
 	}
 
-	public function addWord(int $line, string $word){
-		$this->words[] = $word;
+	protected function getLines(): Lines {
+		return $this->lines;
 	}
 
-	public function getLastAddedWord(): string {
-		$len = count($this->words);
-		if($len > 0){
-			return $this->words[$len - 1];
-		}
-
-		return '';
-	}
-
-	public function getWords(): array {
-		return $this->words;
-	}
-
-	public function clearWords(){
-		$this->words = [];
-	}
-
-	public function getWordCount(): int {
-		return count($this->words);
-	}
-
-	abstract public function isWordRequired(string $word): bool;
-	abstract public function isArgumentCountAvailable(int $count): bool;
-	abstract public function getDefaultArgumentCount(): int;
-	abstract public function getFinalStatement(): Statement;
+	abstract public function parse(): Statement;
 }

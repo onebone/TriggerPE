@@ -2,116 +2,74 @@
 
 namespace onebone\triggerpe\parser;
 
-use onebone\triggerpe\parser\error\InvalidCommandError;
-use onebone\triggerpe\parser\error\UnexpectedCommandError;
-use onebone\triggerpe\parser\error\UnexpectedEndOfScriptError;
 use onebone\triggerpe\parser\statement\ParserAddInt;
-use onebone\triggerpe\parser\statement\ParserChat;
 use onebone\triggerpe\parser\statement\ParserIf;
 use onebone\triggerpe\parser\statement\ParserSetInt;
-use onebone\triggerpe\parser\statement\StatementParser;
 use onebone\triggerpe\statement\DummyStatement;
 use onebone\triggerpe\statement\Statement;
-use onebone\triggerpe\statement\StatementAnd;
 use onebone\triggerpe\TriggerPE;
 
 class Parser {
 	/** @var TriggerPE */
 	private $plugin;
-	/** @var Line[] */
-	private $lines = [];
 
-	public function __construct(TriggerPE $plugin, $lines){
+	/** @var Lines */
+	private $lines;
+
+	/** @var string[] */
+	private $until;
+
+	public function __construct(TriggerPE $plugin, Lines $lines, $until = null){
 		$this->plugin = $plugin;
 
-		foreach($lines as $line){
-			if(is_string($line)){
-				$this->lines[] = new Line($line);
-			}elseif($line instanceof Line){
-				$this->lines[] = $line;
-			}else{
-				throw new \InvalidArgumentException('Invalid type of line was given. Expected string, \onebone\triggerpe\Line, got' . get_class($line));
-			}
-		}
+		$this->lines = $lines;
+		$this->until = $until;
 	}
 
-	public function parse($one=false): Statement {
-		$parser = null;
-
-		$stmt = null;
+	public function parse(): Statement {
 		$init = null;
+		/** @var Statement $ptr */
+		$ptr = null;
 
-		$canPass = true;
-
-		foreach($this->lines as $index=>$line){
-			$words = $line->getWords();
-
-			foreach($words as $word){
-				if(strlen($word) === 0) continue;
-
-				if($parser instanceof StatementParser){
-					if($parser->isWordRequired($word)){
-						$parser->addWord($index, $word);
-
-						$canPass = $parser->isArgumentCountAvailable($parser->getWordCount());
-						continue;
-					}
-				}
-				if($this->isCommand($word)){
-					$cmd = strtoupper($this->getCommand($word));
-
-					if(!$canPass) throw new UnexpectedCommandError($word, $index);
-					elseif($parser instanceof StatementParser){
-						if($one) return $parser->getFinalStatement();
-
-						if($stmt instanceof Statement){
-							$stmt->setNextStatement($parser->getFinalStatement());
-							$stmt = $stmt->getNextStatement();
-						}else{
-							$stmt = $parser->getFinalStatement();
-							$init = $stmt;
-						}
-					}
-
-					switch($cmd){
-						case 'SETINT';
-							$parser = new ParserSetInt($this->plugin);
-							$canPass = false;
-							break;
-						case 'ADDINT':
-							$parser = new ParserAddInt($this->plugin);
-							$canPass = false;
-							break;
-						case 'IF':
-							$parser = new ParserIf($this->plugin);
-							$canPass = false;
-							break;
-						case 'ENDIF':
-							break;
-						case 'CHAT':
-							$parser = new ParserChat($this->plugin);
-							$canPass = false;
-							break;
-						default: throw new InvalidCommandError($word, $index);
-					}
-				}
-			}
-		}
-
-		if(!$canPass) throw new UnexpectedEndOfScriptError(count($this->lines));
-		if($parser instanceof StatementParser){
-			if($stmt instanceof Statement){
-				$stmt->setNextStatement($parser->getFinalStatement());
+		$connect = function(Statement $stmt) use (&$init, &$ptr) {
+			if($init === null){
+				$ptr = $init = $stmt;
 			}else{
-				$stmt = $parser->getFinalStatement();
-				$init = $stmt;
+				$ptr->setNextStatement($stmt);
+				$ptr = $ptr->getNextStatement();
 			}
+		};
+
+		while(!$this->lines->isEnd()){
+			$word = $this->lines->get();
+
+			echo $word . ' ' ;
+
+			if(self::isCommand($word)){
+				$cmd = strtoupper(self::getCommand($word));
+
+				if($this->until !== null and in_array($cmd, $this->until)) break;
+
+				$this->lines->next();
+				switch($cmd){
+					case 'SETINT':
+						$parser = new ParserSetInt($this->plugin, $this->lines);
+						$connect($parser->parse());
+						break;
+					case 'ADDINT':
+						$parser = new ParserAddInt($this->plugin, $this->lines);
+						break;
+					case 'IF':
+						$parser = new ParserIf($this->plugin, $this->lines);
+						$connect($parser->parse());
+						break;
+				}
+			}
+
+			$this->lines->next();
 		}
 
-		if($init === null){
-			return new DummyStatement($this->plugin);
-		}
-
+		if($init === null) return new DummyStatement($this->plugin);
 		return $init;
 	}
 

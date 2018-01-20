@@ -2,72 +2,81 @@
 
 namespace onebone\triggerpe\parser\statement;
 
-use onebone\triggerpe\parser\error\UnexpectedCommandError;
+use onebone\triggerpe\parser\error\InvalidOperatorError;
+use onebone\triggerpe\parser\Lines;
 use onebone\triggerpe\parser\Parser;
 use onebone\triggerpe\statement\Statement;
+use onebone\triggerpe\statement\StatementAnd;
+use onebone\triggerpe\statement\StatementBoolean;
+use onebone\triggerpe\statement\StatementEquals;
+use onebone\triggerpe\statement\StatementGreater;
 use onebone\triggerpe\statement\StatementIf;
+use onebone\triggerpe\Value;
 
 class ParserIf extends StatementParser {
-	/** @var Statement */
-	private $condition = null, $stmt = null, $elseStmt = null;
+	const LOGIC_AND = 0;
+	const LOGIC_OR = 1;
 
-	private $isCondition = false, $isStatement = false, $isEnd = false, $isElse = false, $isElseEnd = false;
+	public function parse(): Statement {
+		$lines = $this->getLines();
+		$logic = -1;
 
-	public function addWord(int $line, string $word){
-		$uword = strtoupper($word);
+		$condStmt = null;
 
-		if(Parser::isCommand($uword)){
-			if(!$this->isCondition){
-				$this->isCondition = true;
-			}elseif(!$this->isEnd and !$this->isStatement){
-				$words = $this->getWords();
-				$this->clearWords();
-				$parser = new Parser($this->getPlugin(), $words);
-				$stmt = $parser->parse(true);
+		while(true){
+			$cond = $this->readCondition($lines);
 
-				$this->condition = $stmt;
-
-				$this->isStatement = true;
+			if($logic === self::LOGIC_AND){
+				if($condStmt === null){
+					$condStmt = $cond;
+				}else{
+					$condStmt = new StatementAnd($this->getPlugin(), $cond, $condStmt);
+				}
+			}else{
+				$condStmt = $cond;
 			}
 
-			if($uword === '@ENDIF'){
-				$words = $this->getWords();
-				$this->clearWords();
-				$parser = new Parser($this->getPlugin(), $words);
-				$stmt = $parser->parse();
-				if($this->isElse){
-					$this->isElseEnd = true;
-					$this->elseStmt = $stmt;
-				}else{
-					$this->stmt = $stmt;
-				}
+			$lines->next();
+			if(Parser::isCommand($lines->get())){
+				$cmd = strtoupper(Parser::getCommand($lines->get()));
 
-				$this->isEnd = true;
-			}elseif($uword === '@ELSE'){
-				if(!$this->isEnd){
-					throw new UnexpectedCommandError($word, $line);
+				$lines->next();
+				if($cmd === 'AND'){
+					$logic = self::LOGIC_AND;
+				}elseif($cmd === 'OR'){
+					$logic = self::LOGIC_OR;
+				}else{
+					break;
 				}
-				$this->isElse = true;
-				return;
 			}
 		}
 
-		parent::addWord($line, $word);
+		$parser = new Parser($this->getPlugin(), $lines, ['ELSE', 'ENDIF']);
+		$stmt = $parser->parse();
+
+		return new StatementIf($this->getPlugin(), $condStmt, $stmt); // TODO @ELSE
 	}
 
-	public function isWordRequired(string $word): bool {
-		return $this->isEnd and strtoupper($word) === '@ELSE' or !$this->isEnd or $this->isElse and !$this->isElseEnd;
-	}
+	public function readCondition(Lines $lines): Statement {
+		$val = $lines->get();
+		$lines->next();
+		$op = $lines->get();
+		if(Parser::isCommand($op)){ // @IF $b @AND ...
+			return new StatementBoolean($this->getPlugin(), new Value($val, Value::TYPE_BOOL));
+		}else{ // @IF $b = $a ...
+			$lines->next();
+			$val2 = $lines->get();
 
-	public function isArgumentCountAvailable(int $count): bool {
-		return $this->getLastAddedWord() === '@ENDIF';
-	}
-
-	public function getDefaultArgumentCount(): int {
-		return 2;
-	}
-
-	public function getFinalStatement(): Statement {
-		return new StatementIf($this->getPlugin(), $this->condition, $this->stmt, $this->elseStmt);
+			switch($op){
+				case '=':
+					return new StatementEquals($this->getPlugin(), new Value($val, Value::TYPE_VOID), new Value($val2, Value::TYPE_VOID));
+				case '>':
+					return new StatementGreater($this->getPlugin(), new Value($val, Value::TYPE_VOID), new Value($val2, Value::TYPE_VOID));
+				case '<':
+					return new StatementGreater($this->getPlugin(), new Value($val2, Value::TYPE_VOID), new Value($val, Value::TYPE_VOID));
+				default:
+					throw new InvalidOperatorError($op, $lines->getCurrentLine());
+			}
+		}
 	}
 }
