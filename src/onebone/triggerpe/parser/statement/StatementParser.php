@@ -27,5 +27,9 @@ abstract class StatementParser {
 		return $this->lines;
 	}
 
+	public function needNext(): bool {
+		return true;
+	}
+
 	abstract public function parse(): Statement;
 }
