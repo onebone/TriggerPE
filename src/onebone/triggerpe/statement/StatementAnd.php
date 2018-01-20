@@ -3,6 +3,7 @@
 namespace onebone\triggerpe\statement;
 
 use onebone\triggerpe\Environment;
+use onebone\triggerpe\statement\error\NoReturnValueError;
 use onebone\triggerpe\TriggerPE;
 use onebone\triggerpe\Value;
 
@@ -18,7 +19,13 @@ class StatementAnd extends Statement {
 	}
 
 	public function execute(Environment $env): ?Value{
-		return new Value($this->a->execute($env)->getBool($env) and $this->b->execute($env)->getBool($env), Value::TYPE_BOOL);
+		$val1 = $this->a->execute($env);
+		if($val1->getType($env) === Value::TYPE_VOID) throw new NoReturnValueError();
+
+		$val2 = $this->b->execute($env);
+		if($val2->getType($env) === Value::TYPE_VOID) throw new NoReturnValueError();
+
+		return new Value($val1->getBool($env) and $val2->getBool($env), Value::TYPE_BOOL);
 	}
 
 	public function getReturnType(): int{

@@ -43,8 +43,6 @@ class Parser {
 		while(!$this->lines->isEnd()){
 			$word = $this->lines->get();
 
-			echo $word . ' ' ;
-
 			if(self::isCommand($word)){
 				$cmd = strtoupper(self::getCommand($word));
 
@@ -58,6 +56,7 @@ class Parser {
 						break;
 					case 'ADDINT':
 						$parser = new ParserAddInt($this->plugin, $this->lines);
+						$connect($parser->parse());
 						break;
 					case 'IF':
 						$parser = new ParserIf($this->plugin, $this->lines);

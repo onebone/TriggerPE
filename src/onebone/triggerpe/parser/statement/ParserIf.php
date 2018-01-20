@@ -40,11 +40,14 @@ class ParserIf extends StatementParser {
 			if(Parser::isCommand($lines->get())){
 				$cmd = strtoupper(Parser::getCommand($lines->get()));
 
-				$lines->next();
 				if($cmd === 'AND'){
 					$logic = self::LOGIC_AND;
+
+					$lines->next();
 				}elseif($cmd === 'OR'){
 					$logic = self::LOGIC_OR;
+
+					$lines->next();
 				}else{
 					break;
 				}
@@ -69,11 +72,11 @@ class ParserIf extends StatementParser {
 
 			switch($op){
 				case '=':
-					return new StatementEquals($this->getPlugin(), new Value($val, Value::TYPE_VOID), new Value($val2, Value::TYPE_VOID));
+					return new StatementEquals($this->getPlugin(), new Value($val, Value::TYPE_UNKNOWN), new Value($val2, Value::TYPE_UNKNOWN));
 				case '>':
-					return new StatementGreater($this->getPlugin(), new Value($val, Value::TYPE_VOID), new Value($val2, Value::TYPE_VOID));
+					return new StatementGreater($this->getPlugin(), new Value($val, Value::TYPE_UNKNOWN), new Value($val2, Value::TYPE_UNKNOWN));
 				case '<':
-					return new StatementGreater($this->getPlugin(), new Value($val2, Value::TYPE_VOID), new Value($val, Value::TYPE_VOID));
+					return new StatementGreater($this->getPlugin(), new Value($val2, Value::TYPE_UNKNOWN), new Value($val, Value::TYPE_UNKNOWN));
 				default:
 					throw new InvalidOperatorError($op, $lines->getCurrentLine());
 			}

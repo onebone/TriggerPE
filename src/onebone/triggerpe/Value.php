@@ -3,7 +3,8 @@
 namespace onebone\triggerpe;
 
 class Value {
-	const TYPE_VOID = 0; // UNKNOWN
+	const TYPE_UNKNOWN = -1;
+	const TYPE_VOID = 0;
 	const TYPE_INT = 1;
 	const TYPE_BOOL = 2;
 	const TYPE_STRING = 3;
