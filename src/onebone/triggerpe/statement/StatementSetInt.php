@@ -21,7 +21,7 @@ class StatementSetInt extends Statement {
 	}
 
 	public function execute(Environment $env): ?Value{
-		$env->setVariable($this->var, new Variable($this->value->getInt($env), Value::TYPE_INT));
+		$env->setVariable($this->var, new Variable($env, new Value($this->value->getInt($env), Value::TYPE_INT), Value::TYPE_INT));
 
 		return $this->value;
 	}

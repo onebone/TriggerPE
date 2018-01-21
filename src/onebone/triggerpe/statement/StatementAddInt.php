@@ -23,11 +23,11 @@ class StatementAddInt extends Statement {
 	public function execute(Environment $env): ?Value{
 		$var = $env->getVariable($this->var);
 		if($var === null){
-			$var = new Variable(0, Value::TYPE_INT);
+			$var = new Variable($env, new Value(0, Value::TYPE_INT), Value::TYPE_INT);
 		}
 
 		$final = $var->getValue() + $this->value->getInt($env);
-		$env->setVariable($this->var, new Variable($final, Value::TYPE_INT));
+		$env->setVariable($this->var, new Variable($env, new Value($final, Value::TYPE_INT), Value::TYPE_INT));
 
 		return new Value($final, Value::TYPE_INT);
 	}

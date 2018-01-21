@@ -2,6 +2,7 @@
 
 namespace onebone\triggerpe;
 
+use onebone\triggerpe\parser\Lines;
 use onebone\triggerpe\parser\Parser;
 use onebone\triggerpe\statement\Statement;
 use pocketmine\Player;
@@ -16,10 +17,10 @@ class Environment{
 	/** @var Player */
 	private $player;
 
-	/** @var string[] */
-	private $lines = [];
+	/** @var Lines */
+	private $lines;
 
-	public function __construct(TriggerPE $plugin, Player $player, $lines = []){
+	public function __construct(TriggerPE $plugin, Player $player, Lines $lines){
 		$this->plugin = $plugin;
 
 		$this->player = $player;
@@ -54,6 +55,8 @@ class Environment{
 	 * @param Variable $var
 	 */
 	public function setVariable(string $name, Variable $var){
+		$name = TriggerPE::replacePlaceHolders($this, $name);
+
 		$this->variables[$name] = $var;
 	}
 
@@ -64,6 +67,8 @@ class Environment{
 	 * @return null|Variable
 	 */
 	public function getVariable(string $name): ?Variable {
+		$name = TriggerPE::replacePlaceHolders($this, $name);
+
 		return $this->variables[$name] ?? null;
 	}
 

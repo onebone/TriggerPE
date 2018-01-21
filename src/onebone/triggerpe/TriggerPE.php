@@ -26,6 +26,19 @@ class TriggerPE extends PluginBase{
 		return null;
 	}
 
+	public static function replacePlaceHolders(Environment $env, string $str): string {
+		preg_match_all('<([a-zA-Z0-9]+)>', $str, $out);
+		foreach($out[1] as $res){
+			$val = TriggerPE::getPlaceHolder($res, $env->getPlayer(), null); // TODO: Pass event in the future
+
+			if($val === null) continue;
+
+			$str = str_replace("<$res>", $val->getString($env), $str);
+		}
+
+		return $str;
+	}
+
 	public function onEnable(){
 		$this->initPlaceHolders();
 	}
