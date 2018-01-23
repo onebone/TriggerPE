@@ -3,7 +3,6 @@
 namespace onebone\triggerpe\statement;
 
 use onebone\triggerpe\Environment;
-use onebone\triggerpe\TriggerPE;
 use onebone\triggerpe\Value;
 use pocketmine\plugin\PluginBase;
 

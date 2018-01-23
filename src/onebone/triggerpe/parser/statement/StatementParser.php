@@ -4,7 +4,6 @@ namespace onebone\triggerpe\parser\statement;
 
 use onebone\triggerpe\parser\Lines;
 use onebone\triggerpe\statement\Statement;
-use onebone\triggerpe\TriggerPE;
 use pocketmine\plugin\PluginBase;
 
 abstract class StatementParser {

@@ -9,7 +9,6 @@ use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\block\SignChangeEvent;
 use pocketmine\event\player\PlayerEvent;
-use pocketmine\event\player\PlayerJoinEvent;
 
 class StatementChat extends Statement {
 	/** @var Value */

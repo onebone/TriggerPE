@@ -9,7 +9,6 @@ use onebone\triggerpe\parser\statement\ParserIf;
 use onebone\triggerpe\parser\statement\ParserSetInt;
 use onebone\triggerpe\statement\DummyStatement;
 use onebone\triggerpe\statement\Statement;
-use onebone\triggerpe\TriggerPE;
 use pocketmine\plugin\PluginBase;
 
 class Parser {
