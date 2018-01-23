@@ -5,21 +5,22 @@ namespace onebone\triggerpe\parser\statement;
 use onebone\triggerpe\parser\Lines;
 use onebone\triggerpe\statement\Statement;
 use onebone\triggerpe\TriggerPE;
+use pocketmine\plugin\PluginBase;
 
 abstract class StatementParser {
-	/** @var TriggerPE */
+	/** @var PluginBase */
 	private $plugin;
 
 	/** @var Lines */
 	private $lines;
 
-	public function __construct(TriggerPE $plugin, Lines $lines){
+	public function __construct(PluginBase $plugin, Lines $lines){
 		$this->plugin = $plugin;
 
 		$this->lines = $lines;
 	}
 
-	public function getPlugin(): TriggerPE {
+	public function getPlugin(): PluginBase {
 		return $this->plugin;
 	}
 
