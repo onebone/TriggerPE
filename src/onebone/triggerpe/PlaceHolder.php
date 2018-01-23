@@ -6,5 +6,5 @@ use pocketmine\event\Event;
 use pocketmine\Player;
 
 interface PlaceHolder {
-	public function getValue(Player $player, ?Event $event): Value;
+	public function getValue(Event $event): Value;
 }

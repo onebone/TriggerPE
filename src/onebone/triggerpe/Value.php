@@ -37,7 +37,7 @@ class Value {
 
 		preg_match_all('<([a-zA-Z0-9]+)>', $this->value, $out);
 		foreach($out[1] as $res){
-			$val = TriggerPE::getPlaceHolder($res, $env->getPlayer(), null); // TODO: Pass event in the future
+			$val = TriggerPE::getPlaceHolder($res, $env->getEvent(), null); // TODO: Pass event in the future
 
 			if($val === null) continue;
 

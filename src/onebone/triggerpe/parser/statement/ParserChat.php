@@ -12,7 +12,7 @@ class ParserChat extends StatementParser {
 		$lines = $this->getLines();
 
 		$message = '';
-		while(!Parser::isCommand($lines->get())){
+		while(!$lines->isEnd() and !Parser::isCommand($lines->get())){
 			$message .= $lines->get() . ' ';
 
 			$lines->next();

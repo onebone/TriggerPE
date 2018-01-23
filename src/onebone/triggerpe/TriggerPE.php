@@ -2,14 +2,18 @@
 
 namespace onebone\triggerpe;
 
-use onebone\triggerpe\statement\Statement;
+use onebone\triggerpe\parser\Lines;
 use pocketmine\event\Event;
-use pocketmine\Player;
+use pocketmine\event\Listener;
+use pocketmine\event\player\PlayerEvent;
+use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\plugin\PluginBase;
 
-class TriggerPE extends PluginBase{
+class TriggerPE extends PluginBase implements Listener {
 	/** @var PlaceHolder[] */
 	static $placeholders = [];
+
+	private $scripts = [];
 
 	public static function addPlaceHolder(string $name, PlaceHolder $placeholder){
 		if(isset(self::$placeholders[$name])) return false;
@@ -18,9 +22,9 @@ class TriggerPE extends PluginBase{
 		return true;
 	}
 
-	public static function getPlaceHolder(string $name, Player $player, ?Event $event): ?Value {
+	public static function getPlaceHolder(string $name, Event $event): ?Value {
 		if(isset(self::$placeholders[$name])){
-			return self::$placeholders[$name]->getValue($player, $event);
+			return self::$placeholders[$name]->getValue($event);
 		}
 
 		return null;
@@ -29,7 +33,7 @@ class TriggerPE extends PluginBase{
 	public static function replacePlaceHolders(Environment $env, string $str): string {
 		preg_match_all('<([a-zA-Z0-9]+)>', $str, $out);
 		foreach($out[1] as $res){
-			$val = TriggerPE::getPlaceHolder($res, $env->getPlayer(), null); // TODO: Pass event in the future
+			$val = TriggerPE::getPlaceHolder($res, $env->getEvent());
 
 			if($val === null) continue;
 
@@ -39,27 +43,61 @@ class TriggerPE extends PluginBase{
 		return $str;
 	}
 
+	public function runScripts(string $name, Event $event){
+		foreach($this->scripts[$name] ?? [] as $lines){
+			$env = new Environment($this, $event, $lines);
+			$env->execute();
+		}
+	}
+
 	public function onEnable(){
 		$this->initPlaceHolders();
+
+		$this->saveDefaultConfig();
+		$this->saveResource('scripts/join.txt');
+		$this->parseScripts();
+
+		$this->getServer()->getPluginManager()->registerEvents($this, $this);
+	}
+
+	private function parseScripts(){
+		$scripts = $this->getConfig()->get("scripts", []);
+		foreach($scripts as $e => $s){
+			$e = strtoupper($e);
+
+			$codes = [];
+			foreach($s as $f){
+				$codes[] = new Lines([file_get_contents($this->getDataFolder() . $f)]);
+			}
+
+			$this->scripts[$e] = $codes;
+		}
 	}
 
 	private function initPlaceHolders(){
 		$this->addPlaceHolder('username', new class implements PlaceHolder {
-			public function getValue(Player $player, ?Event $event): Value {
-				return new Value($player->getName(), Value::TYPE_STRING);
+			public function getValue(Event $event): Value {
+				/** @var PlayerEvent $event */
+				return new Value($event->getPlayer()->getName(), Value::TYPE_STRING);
 			}
 		});
 
 		$this->addPlaceHolder('itemid', new class implements PlaceHolder {
-			public function getValue(Player $player, ?Event $event): Value {
-				return new Value($player->getInventory()->getItemInHand()->getId(), Value::TYPE_INT);
+			public function getValue(Event $event): Value {
+				/** @var PlayerEvent $event */
+				return new Value($event->getPlayer()->getInventory()->getItemInHand()->getId(), Value::TYPE_INT);
 			}
 		});
 
 		$this->addPlaceHolder('health', new class implements PlaceHolder {
-			public function getValue(Player $player, ?Event $event): Value {
-				return new Value($player->getHealth(), Value::TYPE_INT);
+			public function getValue(Event $event): Value {
+				/** @var PlayerEvent $event */
+				return new Value($event->getPlayer()->getHealth(), Value::TYPE_INT);
 			}
 		});
+	}
+
+	public function onPlayerJoin(PlayerJoinEvent $event){
+		$this->runScripts('JOIN', $event);
 	}
 }
