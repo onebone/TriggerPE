@@ -3,14 +3,14 @@
 namespace onebone\triggerpe\statement;
 
 use onebone\triggerpe\Environment;
-use onebone\triggerpe\TriggerPE;
 use onebone\triggerpe\Value;
+use pocketmine\plugin\PluginBase;
 
 class StatementGreater extends Statement {
 	/** @var Value */
 	private $a, $b;
 
-	public function __construct(TriggerPE $plugin, Value $a, Value $b, $next = null){
+	public function __construct(PluginBase $plugin, Value $a, Value $b, $next = null){
 		parent::__construct($plugin, $next);
 
 		$this->a = $a;

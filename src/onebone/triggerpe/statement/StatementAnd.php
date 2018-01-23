@@ -4,14 +4,14 @@ namespace onebone\triggerpe\statement;
 
 use onebone\triggerpe\Environment;
 use onebone\triggerpe\statement\error\NoReturnValueError;
-use onebone\triggerpe\TriggerPE;
 use onebone\triggerpe\Value;
+use pocketmine\plugin\PluginBase;
 
 class StatementAnd extends Statement {
 	/** @var Statement */
 	private $a, $b;
 
-	public function __construct(TriggerPE $plugin, Statement $a, Statement $b, $next = null){
+	public function __construct(PluginBase $plugin, Statement $a, Statement $b, $next = null){
 		parent::__construct($plugin, $next);
 
 		$this->a = $a;

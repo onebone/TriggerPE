@@ -3,17 +3,17 @@
 namespace onebone\triggerpe\statement;
 
 use onebone\triggerpe\Environment;
-use onebone\triggerpe\TriggerPE;
 use onebone\triggerpe\Value;
+use pocketmine\plugin\PluginBase;
 
 abstract class Statement{
-	/** @var TriggerPE */
+	/** @var PluginBase */
 	private $plugin;
 
 	/** @var Statement */
 	private $next;
 
-	public function __construct(TriggerPE $plugin, ?Statement $next = null){
+	public function __construct(PluginBase $plugin, ?Statement $next = null){
 		$this->plugin = $plugin;
 
 		$this->next = $next;
@@ -22,7 +22,7 @@ abstract class Statement{
 	abstract public function execute(Environment $env): ?Value;
 	abstract public function getReturnType(): int;
 
-	public function getPlugin(): TriggerPE {
+	public function getPlugin(): PluginBase {
 		return $this->plugin;
 	}
 

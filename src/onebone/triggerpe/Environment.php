@@ -6,9 +6,10 @@ use onebone\triggerpe\parser\Lines;
 use onebone\triggerpe\parser\Parser;
 use onebone\triggerpe\statement\Statement;
 use pocketmine\event\Event;
+use pocketmine\plugin\PluginBase;
 
 class Environment{
-	/** @var TriggerPE */
+	/** @var PluginBase */
 	private $plugin;
 
 	/** @var Variable[] */
@@ -22,7 +23,7 @@ class Environment{
 	/** @var Lines */
 	private $lines;
 
-	public function __construct(TriggerPE $plugin, Event $event, Lines $lines){
+	public function __construct(PluginBase $plugin, Event $event, Lines $lines){
 		$this->plugin = $plugin;
 
 		$this->event = $event;
@@ -42,7 +43,7 @@ class Environment{
 		}while(($stmt = $stmt->getNextStatement()) instanceof Statement);
 	}
 
-	public function getPlugin(): TriggerPE {
+	public function getPlugin(): PluginBase {
 		return $this->plugin;
 	}
 

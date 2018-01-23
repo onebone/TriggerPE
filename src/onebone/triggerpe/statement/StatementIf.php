@@ -3,14 +3,14 @@
 namespace onebone\triggerpe\statement;
 
 use onebone\triggerpe\Environment;
-use onebone\triggerpe\TriggerPE;
 use onebone\triggerpe\Value;
+use pocketmine\plugin\PluginBase;
 
 class StatementIf extends Statement {
 	/** @var Statement */
 	private $condition, $stmt, $elseStmt;
 
-	public function __construct(TriggerPE $plugin, Statement $condition, ?Statement $stmt = null, ?Statement $elseStmt = null, ?Statement $next = null){
+	public function __construct(PluginBase $plugin, Statement $condition, ?Statement $stmt = null, ?Statement $elseStmt = null, ?Statement $next = null){
 		parent::__construct($plugin, $next);
 
 		$this->condition = $condition;

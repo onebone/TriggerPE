@@ -9,10 +9,10 @@ use onebone\triggerpe\parser\statement\ParserIf;
 use onebone\triggerpe\parser\statement\ParserSetInt;
 use onebone\triggerpe\statement\DummyStatement;
 use onebone\triggerpe\statement\Statement;
-use onebone\triggerpe\TriggerPE;
+use pocketmine\plugin\PluginBase;
 
 class Parser {
-	/** @var TriggerPE */
+	/** @var PluginBase */
 	private $plugin;
 
 	/** @var Lines */
@@ -21,7 +21,7 @@ class Parser {
 	/** @var string[] */
 	private $until;
 
-	public function __construct(TriggerPE $plugin, Lines $lines, $until = null){
+	public function __construct(PluginBase $plugin, Lines $lines, $until = null){
 		$this->plugin = $plugin;
 
 		$this->lines = $lines;
