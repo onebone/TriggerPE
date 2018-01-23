@@ -3,18 +3,18 @@
 namespace onebone\triggerpe\statement;
 
 use onebone\triggerpe\Environment;
-use onebone\triggerpe\TriggerPE;
 use onebone\triggerpe\Value;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\block\SignChangeEvent;
 use pocketmine\event\player\PlayerEvent;
+use pocketmine\plugin\PluginBase;
 
 class StatementChat extends Statement {
 	/** @var Value */
 	private $message;
 
-	public function __construct(TriggerPE $plugin, Value $message, $next = null){
+	public function __construct(PluginBase $plugin, Value $message, $next = null){
 		parent::__construct($plugin, $next);
 
 		$this->message = $message;

@@ -3,14 +3,14 @@
 namespace onebone\triggerpe\statement;
 
 use onebone\triggerpe\Environment;
-use onebone\triggerpe\TriggerPE;
 use onebone\triggerpe\Value;
+use pocketmine\plugin\PluginBase;
 
 class StatementBoolean extends Statement {
 	/** @var Value */
 	private $bool;
 
-	public function __construct(TriggerPE $plugin, Value $bool, $next = null){
+	public function __construct(PluginBase $plugin, Value $bool, $next = null){
 		parent::__construct($plugin, $next);
 
 		$this->bool = $bool;
