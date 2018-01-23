@@ -77,22 +77,19 @@ class TriggerPE extends PluginBase implements Listener {
 	private function initPlaceHolders(){
 		$this->addPlaceHolder('username', new class implements PlaceHolder {
 			public function getValue(Event $event): Value {
-				/** @var PlayerEvent $event */
-				return new Value($event->getPlayer()->getName(), Value::TYPE_STRING);
+				return new Value($event instanceof PlayerEvent ? $event->getPlayer()->getName() : '', Value::TYPE_STRING);
 			}
 		});
 
 		$this->addPlaceHolder('itemid', new class implements PlaceHolder {
 			public function getValue(Event $event): Value {
-				/** @var PlayerEvent $event */
-				return new Value($event->getPlayer()->getInventory()->getItemInHand()->getId(), Value::TYPE_INT);
+				return new Value($event instanceof PlayerEvent ? $event->getPlayer()->getInventory()->getItemInHand()->getId() : -1, Value::TYPE_INT);
 			}
 		});
 
 		$this->addPlaceHolder('health', new class implements PlaceHolder {
 			public function getValue(Event $event): Value {
-				/** @var PlayerEvent $event */
-				return new Value($event->getPlayer()->getHealth(), Value::TYPE_INT);
+				return new Value($event instanceof PlayerEvent ? $event->getPlayer()->getHealth() : -1, Value::TYPE_INT);
 			}
 		});
 	}
