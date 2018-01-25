@@ -22,6 +22,10 @@ abstract class Statement{
 	abstract public function execute(Environment $env): ?Value;
 	abstract public function getReturnType(): int;
 
+	public function flag(): int {
+		return 0;
+	}
+
 	public function getPlugin(): TriggerPE {
 		return $this->plugin;
 	}

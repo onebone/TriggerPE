@@ -1,6 +1,6 @@
 <?php
 
-namespace onebone\triggerpe\parser\error;
+namespace onebone\triggerpe\statement\error;
 
 class RuntimeError extends \Exception {
 	// TODO

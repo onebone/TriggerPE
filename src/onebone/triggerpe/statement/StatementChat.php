@@ -5,11 +5,7 @@ namespace onebone\triggerpe\statement;
 use onebone\triggerpe\Environment;
 use onebone\triggerpe\TriggerPE;
 use onebone\triggerpe\Value;
-use pocketmine\event\block\BlockBreakEvent;
-use pocketmine\event\block\BlockPlaceEvent;
-use pocketmine\event\block\SignChangeEvent;
 use pocketmine\event\player\PlayerEvent;
-use pocketmine\event\player\PlayerJoinEvent;
 
 class StatementChat extends Statement {
 	/** @var Value */
@@ -21,14 +17,14 @@ class StatementChat extends Statement {
 		$this->message = $message;
 	}
 
+	public function flag(): int {
+		return TriggerPE::FLAG_EVENT_PLAYER;
+	}
+
 	public function execute(Environment $env): ?Value{
+		/** @var PlayerEvent $e */
 		$e = $env->getEvent();
-		if($e instanceof PlayerEvent
-			or $e instanceof BlockPlaceEvent
-			or $e instanceof BlockBreakEvent
-			or $e instanceof SignChangeEvent){
-			$e->getPlayer()->sendMessage($this->message->getString($env));
-		}
+		$e->getPlayer()->sendMessage($this->message->getString($env));
 
 		return null;
 	}

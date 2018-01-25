@@ -4,6 +4,8 @@ namespace onebone\triggerpe;
 
 use onebone\triggerpe\parser\Lines;
 use onebone\triggerpe\parser\Parser;
+use onebone\triggerpe\statement\error\InvalidStatementError;
+use onebone\triggerpe\statement\error\RuntimeError;
 use onebone\triggerpe\statement\Statement;
 use pocketmine\event\Event;
 
@@ -19,16 +21,27 @@ class Environment{
 	 */
 	private $event;
 
+	/**
+	 * @var int
+	 */
+	private $flag;
+
 	/** @var Lines */
 	private $lines;
 
-	public function __construct(TriggerPE $plugin, Event $event, Lines $lines){
+	public function __construct(TriggerPE $plugin, Event $event, int $flag, Lines $lines){
 		$this->plugin = $plugin;
 
 		$this->event = $event;
+		$this->flag = $flag;
 		$this->lines = $lines;
 	}
 
+	/**
+	 * Parse and execute statement
+	 *
+	 * @throws RuntimeError
+	 */
 	public function execute(){
 		$parser = new Parser($this->plugin, $this->lines);
 		$stmt = $parser->parse();
@@ -36,9 +49,20 @@ class Environment{
 		$this->executeStatement($stmt);
 	}
 
+	/**
+	 * Executes statement to last
+	 *
+	 * @param Statement $stmt
+	 *
+	 * @throws RuntimeError
+	 */
 	public function executeStatement(Statement $stmt){
 		do{
-			$stmt->execute($this);
+			if(($stmt->flag() & $this->flag) === $stmt->flag()){
+				$stmt->execute($this);
+			}else{
+				throw new InvalidStatementError();
+			}
 		}while(($stmt = $stmt->getNextStatement()) instanceof Statement);
 	}
 
@@ -48,6 +72,10 @@ class Environment{
 
 	public function getEvent(): Event {
 		return $this->event;
+	}
+
+	public function getFlag(): int {
+		return $this->flag;
 	}
 
 	/**
