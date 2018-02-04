@@ -5,6 +5,9 @@ namespace onebone\triggerpe\parser;
 use onebone\triggerpe\parser\error\InvalidCommandError;
 use onebone\triggerpe\parser\statement\ParserAddInt;
 use onebone\triggerpe\parser\statement\ParserChat;
+use onebone\triggerpe\parser\statement\ParserCmd;
+use onebone\triggerpe\parser\statement\ParserCmdCon;
+use onebone\triggerpe\parser\statement\ParserCmdOp;
 use onebone\triggerpe\parser\statement\ParserIf;
 use onebone\triggerpe\parser\statement\ParserSetInt;
 use onebone\triggerpe\statement\DummyStatement;
@@ -66,6 +69,18 @@ class Parser {
 						break;
 					case 'CHAT':
 						$parser = new ParserChat($this->plugin, $this->lines);
+						$connect($parser->parse());
+						break;
+					case 'CMD':
+						$parser = new ParserCmd($this->plugin, $this->lines);
+						$connect($parser->parse());
+						break;
+					case 'CMDOP':
+						$parser = new ParserCmdOp($this->plugin, $this->lines);
+						$connect($parser->parse());
+						break;
+					case 'CMDCON':
+						$parser = new ParserCmdCon($this->plugin, $this->lines);
 						$connect($parser->parse());
 						break;
 					default:

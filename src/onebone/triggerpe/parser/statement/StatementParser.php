@@ -3,6 +3,7 @@
 namespace onebone\triggerpe\parser\statement;
 
 use onebone\triggerpe\parser\Lines;
+use onebone\triggerpe\parser\Parser;
 use onebone\triggerpe\statement\Statement;
 use onebone\triggerpe\TriggerPE;
 
@@ -12,6 +13,9 @@ abstract class StatementParser {
 
 	/** @var Lines */
 	private $lines;
+
+	/** @var bool */
+	private $needNext = true;
 
 	public function __construct(TriggerPE $plugin, Lines $lines){
 		$this->plugin = $plugin;
@@ -27,8 +31,21 @@ abstract class StatementParser {
 		return $this->lines;
 	}
 
+	public function readUntilNextCommand(): string {
+		$this->needNext = false;
+
+		$message = '';
+		while(!$this->lines->isEnd() and !Parser::isCommand($this->lines->get())){
+			$message .= $this->lines->get() . ' ';
+
+			$this->lines->next();
+		}
+
+		return $message;
+	}
+
 	public function needNext(): bool {
-		return true;
+		return $this->needNext;
 	}
 
 	abstract public function parse(): Statement;
