@@ -3,6 +3,7 @@
 namespace onebone\triggerpe\parser;
 
 use onebone\triggerpe\parser\error\InvalidCommandError;
+use onebone\triggerpe\parser\error\UnexpectedWordError;
 use onebone\triggerpe\parser\statement\ParserAddInt;
 use onebone\triggerpe\parser\statement\ParserChat;
 use onebone\triggerpe\parser\statement\ParserCmd;
@@ -84,12 +85,24 @@ class Parser {
 						$connect($parser->parse());
 						break;
 					default:
-						throw new InvalidCommandError($cmd, $this->lines->getCurrentLine());
+						throw new InvalidCommandError(
+							$cmd,
+							$this->lines->getCurrentLine(),
+							$this->lines->getLine(),
+							$this->lines->getCurrentColumn(),
+							strlen($word));
 				}
 
 				if($parser !== null and !$parser->needNext()){
 					continue;
 				}
+			}else{
+				throw new UnexpectedWordError(
+					$word,
+					$this->lines->getLine(),
+					$this->lines->getCurrentLine(),
+					$this->lines->getCurrentColumn(),
+					strlen($word));
 			}
 
 			$this->lines->next();

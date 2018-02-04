@@ -27,6 +27,10 @@ class Lines {
 		}
 	}
 
+	public function getLine(): string {
+		return $this->lines[$this->currentLine];
+	}
+
 	public function getLines(): array {
 		return $this->lines;
 	}
@@ -37,12 +41,25 @@ class Lines {
 
 	public function get(): string {
 		$word = $this->words[$this->currentLine][$this->current] ?? null;
-		if($word === null) throw new UnexpectedEndOfScriptError($this->currentLine);
+		if($word === null) throw new UnexpectedEndOfScriptError($this->currentLine, '', 0, 1);
 		return $word;
 	}
 
 	public function getCurrentLine(): int {
 		return $this->currentLine;
+	}
+
+	public function getCurrentIndex(): int {
+		return $this->current;
+	}
+
+	public function getCurrentColumn(): int {
+		$column = 0;
+		for($i = 0; $i < $this->current; $i++){
+			$column += strlen($this->words[$this->currentLine][$i]) + 1;
+		}
+
+		return $column;
 	}
 
 	public function isEnd(): bool {

@@ -14,7 +14,12 @@ class ParserSetInt extends StatementParser {
 
 		$var = $lines->get();
 		if(!Variable::isVariable($var)){
-			throw new UnexpectedArgumentTypeError('value', 'variable', $lines->getCurrentLine());
+			throw new UnexpectedArgumentTypeError(
+				'value', 'variable',
+				$lines->getLine(),
+				$lines->getCurrentLine(),
+				$lines->getCurrentColumn(),
+				strlen($var));
 		}
 
 		$lines->next();

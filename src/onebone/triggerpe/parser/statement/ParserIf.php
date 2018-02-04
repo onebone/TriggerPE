@@ -78,7 +78,12 @@ class ParserIf extends StatementParser {
 				case '<':
 					return new StatementGreater($this->getPlugin(), new Value($val2, Value::TYPE_UNKNOWN), new Value($val, Value::TYPE_UNKNOWN));
 				default:
-					throw new InvalidOperatorError($op, $lines->getCurrentLine());
+					throw new InvalidOperatorError(
+						$op,
+						$lines->getLine(),
+						$lines->getCurrentLine(),
+						$lines->getCurrentColumn(),
+						1);
 			}
 		}
 	}
